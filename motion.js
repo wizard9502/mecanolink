@@ -101,3 +101,61 @@ if (!reduce && 'IntersectionObserver' in window && 'MutationObserver' in window)
     setTimeout(() => btn.classList.remove('bump'), 460);
   });
 }
+
+/* ---------- Bouteek-style interaction refinements ---------- */
+if (!reduce) {
+  // Sliding bottom-nav indicator: measures the active tab, no layout thrash on scroll.
+  const nav = document.querySelector('#bottomNav');
+  function glide() {
+    if (!nav) return;
+    const active = nav.querySelector('button.active');
+    if (!active) return;
+    nav.style.setProperty('--glide-x', `${active.offsetLeft}px`);
+    nav.style.setProperty('--glide-w', `${active.offsetWidth}px`);
+  }
+  glide();
+  new MutationObserver(glide).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
+  window.addEventListener('resize', glide, { passive: true });
+
+  // Product image skeletons: reveal when the real photo has decoded.
+  function settleImages() {
+    document.querySelectorAll('.art img').forEach((img) => {
+      const host = img.closest('.art');
+      if (!host || host.classList.contains('loaded')) return;
+      if (img.complete && img.naturalWidth > 0) host.classList.add('loaded');
+      else {
+        img.addEventListener('load', () => host.classList.add('loaded'), { once: true });
+        img.addEventListener('error', () => host.classList.add('loaded'), { once: true });
+      }
+    });
+  }
+  settleImages();
+  new MutationObserver(settleImages).observe(document.body, { childList: true, subtree: true });
+
+  // Swipe a bottom sheet down by its grip to dismiss.
+  document.addEventListener('pointerdown', (event) => {
+    const grip = event.target.closest('.sheet-grip');
+    if (!grip) return;
+    const sheet = grip.closest('.sheet');
+    if (!sheet) return;
+    const start = event.clientY;
+    let delta = 0;
+    grip.setPointerCapture?.(event.pointerId);
+    const move = (e) => {
+      delta = Math.max(0, e.clientY - start);
+      sheet.classList.add('swiping');
+      sheet.style.transform = `translateY(${delta}px)`;
+    };
+    const up = () => {
+      grip.removeEventListener('pointermove', move);
+      grip.removeEventListener('pointerup', up);
+      grip.removeEventListener('pointercancel', up);
+      sheet.classList.remove('swiping');
+      sheet.style.transform = '';
+      if (delta > 80) sheet.querySelector('[data-action="close-sheet"]')?.click();
+    };
+    grip.addEventListener('pointermove', move);
+    grip.addEventListener('pointerup', up);
+    grip.addEventListener('pointercancel', up);
+  });
+}

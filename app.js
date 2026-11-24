@@ -45,7 +45,7 @@ function icon(name, cls = '') {
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* ---------------- state ---------------- */
-const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, brand: null, allVehicles: false, sellerQuery: '', sellerRegion: '', sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
+const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, brand: null, allVehicles: false, sellerQuery: '', sellerRegion: '', accent: 'orange', sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
 let state = { ...defaults };
 try {
   const saved = JSON.parse(localStorage.getItem(KEY) ?? '{}');
@@ -53,6 +53,7 @@ try {
   if (!findVehicle(state.vehicleId)) state.vehicleId = VEHICLES[0].id;
 } catch { state = { ...defaults }; }
 let t = translator(state.lang);
+document.documentElement.dataset.accent = state.accent === 'lime' ? 'lime' : 'orange';
 let sheetCleanup = null;
 let deferredPrompt = null;
 let sosActive = false;
@@ -69,7 +70,7 @@ function toast(message) {
   const root = $('#toastRoot');
   const el = document.createElement('div');
   el.className = 'toast';
-  el.innerHTML = `${icon('check')}<span>${esc(message)}</span>`;
+  el.innerHTML = `<svg class="ml-check" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m7 12 3.2 3.2L17 8.5"/></svg><span>${esc(message)}</span>`;
   root.append(el);
   setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 220); }, 2600);
 }
@@ -247,6 +248,7 @@ function viewProfile() {
     <div class="list-card"><div class="row"><div><h3>Bonjour, Mo 👋</h3><p>Compte démo · ${esc(CITIES.find((c) => c.id === state.city)?.name ?? '')}</p></div><span class="status ok">En ligne</span></div></div>
     <div class="list-card"><h3>Préférences</h3>
       <div class="divider"></div>
+      <div class="kv"><span>Thème d’accent</span><button class="link-btn" type="button" data-action="accent">${state.accent === 'lime' ? 'Vert néon' : 'Orange'} ↔</button></div>
       <div class="kv"><span>Langue</span><button class="link-btn" type="button" data-action="lang">${state.lang === 'fr' ? 'Français' : 'English'} ↔</button></div>
       <div class="kv"><span>Ville de livraison</span><button class="link-btn" type="button" data-action="open-city">${esc(CITIES.find((c) => c.id === state.city)?.name ?? '')} ▾</button></div>
       <div class="kv"><span>Paiement par défaut</span><button class="link-btn" type="button" data-action="open-cart">${esc(PAYMENTS.find((p) => p.id === state.payment)?.name ?? '')} ▾</button></div>
@@ -452,6 +454,7 @@ document.addEventListener('click', (event) => {
     case 'select-brand': state.brand = id; state.view = 'catalog'; save(); closeSheet(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); break;
     case 'clear-brand': state.brand = null; render(); break;
     case 'toggle-all': state.allVehicles = !state.allVehicles; render(); break;
+    case 'accent': state.accent = state.accent === 'lime' ? 'orange' : 'lime'; document.documentElement.dataset.accent = state.accent; save(); render(); break;
     case 'seller-region': state.sellerRegion = id || ''; render(); break;
     case 'open-part': sheetPart(id); break;
     case 'select-vehicle': state.vehicleId = id; save(); closeSheet(); render(); toast('Véhicule mis à jour'); break;

@@ -18,6 +18,7 @@
 | 24 pièces / 8 catégories | 83 pièces, 13 catégories, 84 marques, filtres marque + tri |
 | Aucune animation | Mouvements progressifs : entrées en cascade, compteurs, survol, pressions, panneaux |
 | Pas d’annuaire | 43 vendeurs sourcés, filtrables par région et recherche, avec liens et téléphones publics |
+| Interactions simples | Patterns Bouteek : tokens de thème, thème vert néon, pressable, indicateur glissant, skeletons, check dessiné, sheet swipe |
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwizard9502%2Fmecanolink&project-name=mecanolink&repository-name=mecanolink)
 

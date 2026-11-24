@@ -74,3 +74,104 @@ html.motion-ready .bottom-nav button { position: relative; overflow: hidden; }
   html.motion-ready .radar-item .ring { animation: none !important; }
   .ml-ripple { display: none; }
 }
+
+/* ---------- Bouteek-grade interaction system ---------- */
+:root {
+  --spring: cubic-bezier(.2, 1.4, .35, 1);
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --press: scale(.96) translateY(1px);
+}
+html[data-accent='lime'] {
+  --accent: #00ff41;
+  --accent-2: #8dffab;
+  --accent-soft: rgba(0, 255, 65, .13);
+  --green: #00ff41;
+}
+
+/* Every control behaves like a physical button. */
+html.motion-ready button,
+html.motion-ready .btn,
+html.motion-ready .chip,
+html.motion-ready .sort-btn,
+html.motion-ready .add-bar,
+html.motion-ready .pay-option,
+html.motion-ready .icon-chip {
+  transition: transform 120ms var(--ease-out), box-shadow 120ms ease, background-color 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+html.motion-ready button:active:not(:disabled),
+html.motion-ready [role='button']:active { transform: var(--press); box-shadow: inset 0 2px 6px rgba(0,0,0,.24); opacity: .94; }
+
+html.motion-ready :focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Sliding indicator for the bottom navigation. */
+.bottom-nav { position: fixed; }
+.bottom-nav::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 4px;
+  height: 48px;
+  width: var(--glide-w, 0px);
+  border-radius: 12px;
+  background: var(--accent-soft);
+  transform: translateX(var(--glide-x, 0px));
+  transition: transform 280ms var(--ease-out), width 280ms var(--ease-out);
+  pointer-events: none;
+}
+.bottom-nav button.active { background: transparent; }
+.bottom-nav button.active svg,
+.bottom-nav button.active span { position: relative; z-index: 1; }
+
+/* Skeleton shimmer under product images until they load. */
+html.motion-ready .art::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255,255,255,.10) 50%, transparent 80%);
+  background-size: 200% 100%;
+  animation: ml-skeleton 1.6s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+html.motion-ready .art.loaded::before { display: none; }
+@keyframes ml-skeleton { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+/* Toast: countdown bar + drawn check. */
+.toast { position: relative; overflow: hidden; padding-right: 14px; }
+.toast::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--accent);
+  transform-origin: left;
+  animation: ml-toast-progress 2.6s linear forwards;
+}
+@keyframes ml-toast-progress { from { transform: scaleX(1); } to { transform: scaleX(0); } }
+.ml-check { width: 18px; height: 18px; overflow: visible; flex: none; }
+.ml-check circle { fill: none; stroke: currentColor; stroke-width: 2; stroke-dasharray: 70; stroke-dashoffset: 70; animation: ml-draw 280ms ease-out forwards; }
+.ml-check path { fill: none; stroke: currentColor; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 28; stroke-dashoffset: 28; animation: ml-draw 260ms var(--ease-out) 110ms forwards; }
+@keyframes ml-draw { to { stroke-dashoffset: 0; } }
+
+/* Bottom sheet: contained scrolling + swipe grip affordance. */
+.sheet { overscroll-behavior: contain; touch-action: pan-y; }
+.sheet-grip { cursor: grab; touch-action: none; }
+.sheet-grip:active { cursor: grabbing; background: var(--line-strong); }
+.sheet.swiping { transition: transform .06s linear; }
+
+@media (prefers-contrast: high) {
+  .part-card, .list-card, .radar, .vehicle-bar { border-width: 2px; }
+  .chip, .btn { border-width: 2px; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .topbar, .bottom-nav, .cart-bar, .install-banner { backdrop-filter: none !important; background: var(--bg) !important; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bottom-nav::before { transition: none; }
+  .toast::after { display: none; }
+  .ml-check circle, .ml-check path { animation: none; stroke-dashoffset: 0; }
+  html.motion-ready .art::before { display: none; }
+}
