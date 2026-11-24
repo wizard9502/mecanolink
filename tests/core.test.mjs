@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  PARTS, VEHICLES, CATEGORIES, BRANDS, REGION_TIPS, normalize, searchParts, parseAssistantQuery,
+  PARTS, VEHICLES, CATEGORIES, BRANDS, REGION_TIPS, SELLERS, SELLER_REGIONS, normalize, searchParts, parseAssistantQuery,
   assistantRecommend, formatPrice, cartLines, cartCount, cartTotals,
   maintenanceFor, orderReference, translator,
 } from '../core.js';
@@ -24,6 +24,18 @@ test('brands and regional advice cover West Africa', () => {
   assert.ok(BRANDS.some((b) => b.name === 'Tata'));
   assert.ok(REGION_TIPS.length >= 4);
   for (const tip of REGION_TIPS) assert.ok(tip.partIds.every((id) => PARTS.some((p) => p.id === id)), tip.id);
+});
+
+test('seller directory is sourced and region-tagged', () => {
+  assert.ok(SELLERS.length >= 40, 'seller count');
+  assert.equal(SELLER_REGIONS.length, 14);
+  const ids = new Set(SELLERS.map((s) => s.id));
+  assert.equal(ids.size, SELLERS.length);
+  for (const s of SELLERS) {
+    assert.ok(s.name && s.city && s.address && s.specialty, s.id);
+    assert.ok(SELLER_REGIONS.includes(s.region), s.id + ' region');
+    assert.match(s.source, /^https?:\/\//, s.id + ' source');
+  }
 });
 
 test('normalize ignores accents and punctuation', () => {

@@ -217,7 +217,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 .garage-avatar { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 800; }
 
 /* ---------- bottom nav ---------- */
-.bottom-nav { position: fixed; z-index: 40; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 520px; display: grid; grid-template-columns: repeat(5, 1fr); padding: 8px 6px calc(8px + var(--safe-bottom)); background: rgba(13, 14, 16, .94); backdrop-filter: blur(20px); border-top: 1px solid var(--line); }
+.bottom-nav { position: fixed; z-index: 40; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 520px; display: grid; grid-template-columns: repeat(6, 1fr); padding: 8px 4px calc(8px + var(--safe-bottom)); background: rgba(13, 14, 16, .94); backdrop-filter: blur(20px); border-top: 1px solid var(--line); }
 .bottom-nav button { display: flex; flex-direction: column; align-items: center; gap: 3px; min-height: 48px; justify-content: center; border: 0; border-radius: 12px; background: none; color: #868c92; font-size: 9.5px; font-weight: 650; transition: color .16s, background .16s, transform .16s; }
 .bottom-nav button svg { width: 20px; height: 20px; }
 .bottom-nav button:hover { color: var(--text); transform: translateY(-2px); }

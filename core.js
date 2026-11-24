@@ -234,6 +234,54 @@ export const PARTS = [
 ];
 
 /** Service rules used by the maintenance radar. */
+export const SELLER_REGIONS = ["Dakar", "Diourbel", "Fatick", "Kaffrine", "Kaolack", "Kédougou", "Kolda", "Louga", "Matam", "Saint-Louis", "Sédhiou", "Tambacounda", "Thiès", "Ziguinchor"];
+
+export const SELLERS = [
+  {"id":"s01","name":"La Sénégalaise de l’Automobile (LASA)","region":"Dakar","city":"Dakar","address":"Km 2,5 Bd du Centenaire","phone":"+221 33 849 38 38","specialty":"Pièces d’origine Mercedes, Mitsubishi, Citroën, Kia, Suzuki, Bosch","source":"https://www.senegalaise-automobile.com/pieces-de-rechange"},
+  {"id":"s02","name":"DPA – Dufoncier Pièces Auto","region":"Dakar","city":"Dakar","address":"Rue Mangin x Jallabert, Dakar Plateau","phone":"+221 33 842 74 74","specialty":"Pièces multimarques, carrosserie et mécanique","source":"https://dpa.sn/"},
+  {"id":"s03","name":"Afrique Pièces Auto","region":"Dakar","city":"Dakar","address":"Mermoz VDN / Route de Ngor","phone":"+221 77 827 52 24","specialty":"Pièces multimarques","source":"https://automag.sn/2026/01/03/acheter-pieces-detachees-automobiles-dakar/"},
+  {"id":"s04","name":"Baidin International Trading","region":"Dakar","city":"Dakar","address":"56-58 Avenue Faidherbe","phone":"+221 77 855 41 93","specialty":"Pièces détachées toutes marques","source":"https://automag.sn/2026/01/03/acheter-pieces-detachees-automobiles-dakar/"},
+  {"id":"s05","name":"Caetano Parts Sénégal","region":"Dakar","city":"Dakar","address":"Km 4,5 Bd du Centenaire / Hann Bel-Air","phone":"+221 33 849 31 31","specialty":"Pièces Renault, Ford, Isuzu, Mahindra, Baic, Jetour","source":"https://autolink.sn/"},
+  {"id":"s06","name":"Africafiltres","region":"Dakar","city":"Dakar","address":"Route des Hydrocarbures, Bel Air","phone":"+221 33 864 95 00","specialty":"Filtration automobile","source":"https://automag.sn/2026/01/03/acheter-pieces-detachees-automobiles-dakar/"},
+  {"id":"s07","name":"SenAutoZone","region":"Dakar","city":"Dakar","address":"31 Bis Liberté 6 Extension","phone":"+221 33 867 45 47","specialty":"Pièces américaines et accessoires","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s08","name":"Groupe Asysum","region":"Dakar","city":"Dakar","address":"Thiaroye","phone":"+221 33 853 22 63","specialty":"Pièces détachées","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s09","name":"Dakar Diesel Services","region":"Dakar","city":"Dakar","address":"Médina, Rue 11 x 12","phone":"+221 33 821 11 51","specialty":"Pièces diesel","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s10","name":"Froid Auto Centenaire","region":"Dakar","city":"Dakar","address":"Fass, face obélisque","phone":"+221 33 822 79 48","specialty":"Climatisation et pièces auto","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s11","name":"Scorpion Auto Parts","region":"Dakar","city":"Dakar","address":"Route du Méridien Président, Almadies","phone":"+221 77 178 36 41","specialty":"Pièces auto","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s12","name":"L’Africaine de l’Automobile SA","region":"Dakar","city":"Dakar","address":"30 Avenue Président Lamine Gueye","phone":"+221 33 889 75 00","specialty":"Pièces détachées","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s13","name":"Wakeur Khadim Sàrl","region":"Dakar","city":"Dakar","address":"106 Avenue Blaise Diagne","phone":"+221 33 842 27 36","specialty":"Pièces détachées","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s14","name":"Sylla et Frères","region":"Dakar","city":"Dakar","address":"Dakar","phone":"+221 33 853 00 85","specialty":"Pièces détachées","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s15","name":"Auto Parts Sénégal Sàrl","region":"Dakar","city":"Pikine","address":"75 Km Bd du Centenaire, Pikine","phone":"","specialty":"Pièces détachées","source":"https://www.showroomafrica.com/sn/automobiles/pieces-detachees-automobile"},
+  {"id":"s16","name":"DIAOTECH","region":"Dakar","city":"Dakar","address":"5 route des Mamelles, Almadies","phone":"+221 77 474 67 51","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto"},
+  {"id":"s17","name":"Établissements Keur Bella (KB)","region":"Dakar","city":"Dakar","address":"66 Avenue Lamine Guèye, BP 4121","phone":"+221 33 822 36 85","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto"},
+  {"id":"s18","name":"Canada Pièces Auto","region":"Dakar","city":"Guédiawaye","address":"Rue CF 03, Guédiawaye","phone":"","specialty":"Pièces neuves et usagées du Canada","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto"},
+  {"id":"s19","name":"KPA – Kalsoum Pièces Auto","region":"Dakar","city":"Guédiawaye","address":"Marché Sahm, face hôpital Keur Sœur","phone":"","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto"},
+  {"id":"s20","name":"Hallo Pièces Automobiles","region":"Dakar","city":"Pikine","address":"Guinaw Rails, face marché Waranka","phone":"","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto"},
+  {"id":"s21","name":"DTS Mécanique","region":"Dakar","city":"Dakar","address":"Sicap Liberté 4, Villa 5051","phone":"","specialty":"Pièces d’origine et aftermarket","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=12"},
+  {"id":"s22","name":"SICAS – Société Ind. Commerciale de l’Automobile","region":"Dakar","city":"Dakar","address":"Avenue Malick Sy x Ambroise Mendy, BP 458","phone":"","specialty":"Pièces et accessoires","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=8"},
+  {"id":"s23","name":"GIE Vision 3000","region":"Dakar","city":"Dakar","address":"Cité Ainoumadi","phone":"+221 33 878 16 87","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=12"},
+  {"id":"s24","name":"KYAS Pièces Détachées","region":"Dakar","city":"Dakar","address":"Face gare routière de Colobane, 145 Colobane","phone":"","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=10"},
+  {"id":"s25","name":"Jeep Team Africa","region":"Dakar","city":"Dakar","address":"29 route du Front de Terre, Grand-Yoff","phone":"","specialty":"Pièces pour Jeep et 4x4","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=10"},
+  {"id":"s26","name":"Thiaroye Automobiles (STA)","region":"Dakar","city":"Dakar","address":"Km 6,5 Bd du Centenaire, ex-route de Rufisque","phone":"","specialty":"Importation et distribution de pièces","source":"https://directory.africa-business.com/business/99213e972c/senautozone"},
+  {"id":"s27","name":"SOGAFRIC Sénégal – Pièces détachées","region":"Dakar","city":"Dakar","address":"Dakar (points de vente Sogafric)","phone":"","specialty":"Pièces Jeep, Fiat, Case, New Holland","source":"https://sogafric-senegal.com/pieces-detachees/"},
+  {"id":"s28","name":"Touba Pièces Détachées Soukaye et Frères","region":"Dakar","city":"Pikine","address":"Thiaroye sur Mer, Km 12 route de Rufisque","phone":"+221 77 631 94 80","specialty":"Pièces toutes marques","source":"https://www.goafricaonline.com/sn/657310-touba-soukaye-freres-pieces-detachees-pikine-senegal"},
+  {"id":"s29","name":"Pièces Auto Sénégal","region":"Dakar","city":"Ouakam","address":"Rue 167 x 165, Mosquée de la Divinité, Corniche-Ouest","phone":"+221 77 403 02 01","specialty":"Distributeur pièces et services auto","source":"https://www.facebook.com/piecesauto.sn/"},
+  {"id":"s30","name":"SAKA Senegal","region":"Dakar","city":"Dakar","address":"Km 4,5, Dakar","phone":"+221 77 719 93 89","specialty":"Pneus, batteries, huiles et accessoires","source":"https://www.facebook.com/sakasenegal/"},
+  {"id":"s31","name":"AutoLink SN (A3S Sàrl)","region":"Dakar","city":"Dakar","address":"Grand Mbao, Cité Sipres 05, face mosquée","phone":"","specialty":"Pièces toutes marques, livraison 14 régions","source":"https://autolink.sn/"},
+  {"id":"s32","name":"ONLINE DP / AFRICA","region":"Thiès","city":"Thiès Ouest","address":"Route de Mbour, Thiès Ouest, BP 57","phone":"+221 77 462 10 92","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=6"},
+  {"id":"s33","name":"Sadio Trading Sàrl ZI Thiès","region":"Thiès","city":"Thiès","address":"Zone industrielle, Thiès Nord","phone":"+221 77 228 64 72","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=8"},
+  {"id":"s34","name":"Mon Parent Automobile","region":"Thiès","city":"Thiès","address":"Thiès Nord","phone":"","specialty":"Vente de pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=10"},
+  {"id":"s35","name":"Nianing Auto-Quad","region":"Thiès","city":"Nianing","address":"Route de Joal, Nianing","phone":"","specialty":"Pièces auto et quad","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto"},
+  {"id":"s36","name":"ETS Lo et Frères","region":"Thiès","city":"Thiès Ouest","address":"Gand Yoff, cité Millionnaire, Thiès Ouest","phone":"+221 33 827 00 74","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=9"},
+  {"id":"s37","name":"Touba Matlaboul Fawzeyni","region":"Thiès","city":"Thiès","address":"Thiès, Sénégal","phone":"","specialty":"Pièces américaines, allemandes et asiatiques","source":"https://sn.coinafrique.com/annonce/accessoires-et-pieces-detachees/pieces-detachees-3692806"},
+  {"id":"s38","name":"Keur Dabakh","region":"Fatick","city":"Fatick","address":"Route Mbour–Fatick–Kaolack","phone":"+221 77 134 34 14","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=6"},
+  {"id":"s39","name":"Keur Khadim Pièce Détaché Automobile","region":"Kédougou","city":"Kédougou","address":"Gare routière, Kédougou","phone":"+221 76 803 43 67","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=6"},
+  {"id":"s40","name":"Ibrahima Sory Diallo","region":"Kédougou","city":"Kédougou","address":"Gare routière de Kédougou","phone":"","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=10"},
+  {"id":"s41","name":"Taïf Pièces Automobile","region":"Tambacounda","city":"Tambacounda","address":"Tambacounda","phone":"","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=8"},
+  {"id":"s42","name":"TDM / Pièces Détachées Automobile","region":"Kolda","city":"Diaoube","address":"Kolda, Diaoube","phone":"","specialty":"Pièces détachées","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=8"},
+  {"id":"s43","name":"Guincaillerie Générale Taïf","region":"Diourbel","city":"Touba","address":"Rue Gare Boundaw, Touba","phone":"","specialty":"Pièces détachées et quincaillerie","source":"https://www.goafricaonline.com/sn/annuaire/pieces-detachees-automobile-voiture-moto?p=6"}
+];
+
 export const REGION_TIPS = [
   {
     "id": "t1",
@@ -459,7 +507,7 @@ export function orderReference(seed = Date.now()) {
 
 export const I18N = {
   fr: {
-    home: 'Accueil', catalog: 'Catalogue', garage: 'Garage', orders: 'Commandes', profile: 'Profil',
+    home: 'Accueil', catalog: 'Catalogue', garage: 'Garage', orders: 'Commandes', profile: 'Profil', sellers: 'Vendeurs',
     search: 'Rechercher une pièce, une réf OEM, une marque…', assistant: 'VIN / IA',
     sos: 'SOS 24/7', favorites: 'Favoris', cart: 'Panier', myCars: 'Mes autos',
     add: 'Ajouter', added: 'Ajouté au panier', viewAll: 'Voir tout', results: 'résultats',
@@ -470,7 +518,7 @@ export const I18N = {
     demo: 'Démo — données fictives', emptyCart: 'Votre panier est vide',
   },
   en: {
-    home: 'Home', catalog: 'Catalog', garage: 'Garage', orders: 'Orders', profile: 'Profile',
+    home: 'Home', catalog: 'Catalog', garage: 'Garage', orders: 'Orders', profile: 'Profile', sellers: 'Sellers',
     search: 'Search a part, OEM ref, brand…', assistant: 'VIN / AI',
     sos: 'SOS 24/7', favorites: 'Favorites', cart: 'Cart', myCars: 'My cars',
     add: 'Add', added: 'Added to cart', viewAll: 'See all', results: 'results',

@@ -7,7 +7,7 @@ import {
   findPart, findVehicle, searchParts, assistantRecommend, formatPrice,
   cartLines, cartCount, cartTotals, maintenanceFor, orderReference, translator, normalize,
 } from './core.js';
-import { extraHome, brandsSheetHtml } from './extra.js';
+import { extraHome, brandsSheetHtml, sellersView } from './extra.js';
 
 const REPO_URL = 'https://github.com/wizard9502/mecanolink';
 const KEY = 'mecanolink.v1';
@@ -45,7 +45,7 @@ function icon(name, cls = '') {
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* ---------------- state ---------------- */
-const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, brand: null, allVehicles: false, sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
+const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, brand: null, allVehicles: false, sellerQuery: '', sellerRegion: '', sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
 let state = { ...defaults };
 try {
   const saved = JSON.parse(localStorage.getItem(KEY) ?? '{}');
@@ -240,6 +240,8 @@ function viewOrders() {
     </article>`).join('')}
   </section>`;
 }
+function viewSellers() { return sellersView(state.sellerQuery, state.sellerRegion); }
+
 function viewProfile() {
   return `<section class="section" style="margin-top:14px">
     <div class="list-card"><div class="row"><div><h3>Bonjour, Mo 👋</h3><p>Compte démo · ${esc(CITIES.find((c) => c.id === state.city)?.name ?? '')}</p></div><span class="status ok">En ligne</span></div></div>
@@ -263,7 +265,7 @@ function render() {
   $('#cityLabel').textContent = CITIES.find((c) => c.id === state.city)?.name ?? 'Dakar';
   $('#langBtn').textContent = state.lang.toUpperCase();
   $('#searchInput').placeholder = t('search');
-  $('#view').innerHTML = ({ home: viewHome, catalog: viewCatalog, garage: viewGarage, orders: viewOrders, profile: viewProfile })[state.view]();
+  $('#view').innerHTML = ({ home: viewHome, catalog: viewCatalog, garage: viewGarage, orders: viewOrders, profile: viewProfile, sellers: viewSellers })[state.view]();
   $$('#bottomNav button').forEach((btn) => {
     btn.classList.toggle('active', btn.dataset.view === state.view);
     $('span', btn).textContent = t(btn.dataset.view);
@@ -450,6 +452,7 @@ document.addEventListener('click', (event) => {
     case 'select-brand': state.brand = id; state.view = 'catalog'; save(); closeSheet(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); break;
     case 'clear-brand': state.brand = null; render(); break;
     case 'toggle-all': state.allVehicles = !state.allVehicles; render(); break;
+    case 'seller-region': state.sellerRegion = id || ''; render(); break;
     case 'open-part': sheetPart(id); break;
     case 'select-vehicle': state.vehicleId = id; save(); closeSheet(); render(); toast('Véhicule mis à jour'); break;
     case 'select-city': state.city = id; save(); closeSheet(); render(); toast(`Livraison : ${CITIES.find((c) => c.id === id)?.name}`); break;
@@ -485,6 +488,12 @@ document.addEventListener('submit', (event) => {
   runAssistant(new FormData(event.target).get('q') ?? '');
 });
 document.addEventListener('input', (event) => {
+  if (event.target.id === 'sellerSearch') {
+    state.sellerQuery = event.target.value;
+    $('#view').innerHTML = sellersView(state.sellerQuery, state.sellerRegion);
+    const next = $('#sellerSearch'); if (next) { next.focus(); next.setSelectionRange(next.value.length, next.value.length); }
+    return;
+  }
   if (event.target.id !== 'searchInput') return;
   state.query = event.target.value;
   if (state.view !== 'catalog') { state.view = 'catalog'; render(); $('#searchInput').value = state.query; $('#searchInput').focus(); }
