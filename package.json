@@ -1,0 +1,12 @@
+{
+  "name": "mecanolink",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Demo PWA for auto parts in Senegal & West Africa — rebuilt and improved from a Gemini Canvas concept.",
+  "scripts": {
+    "start": "python3 -m http.server 8080",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "license": "MIT"
+}

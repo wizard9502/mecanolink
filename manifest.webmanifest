@@ -1,0 +1,14 @@
+{
+  "name": "MecanoLink — Pièces auto Sénégal",
+  "short_name": "MecanoLink",
+  "description": "Pièces auto compatibles, entretien, SOS 24/7 et Mobile Money (démo).",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0c0e",
+  "theme_color": "#0d0e10",
+  "lang": "fr",
+  "icons": [
+    { "src": "assets/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
