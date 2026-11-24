@@ -1,13 +1,13 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  PARTS, VEHICLES, CATEGORIES, normalize, searchParts, parseAssistantQuery,
+  PARTS, VEHICLES, CATEGORIES, BRANDS, REGION_TIPS, normalize, searchParts, parseAssistantQuery,
   assistantRecommend, formatPrice, cartLines, cartCount, cartTotals,
   maintenanceFor, orderReference, translator,
 } from '../core.js';
 
 test('catalog is internally consistent', () => {
-  assert.equal(PARTS.length, 24);
+  assert.ok(PARTS.length >= 80, 'extended catalog');
   const ids = new Set(PARTS.map((p) => p.id));
   assert.equal(ids.size, PARTS.length, 'part ids are unique');
   for (const part of PARTS) {
@@ -15,6 +15,15 @@ test('catalog is internally consistent', () => {
     assert.ok(CATEGORIES.some((c) => c.id === part.category), `${part.id} category exists`);
     for (const vid of part.compatible) assert.ok(VEHICLES.some((v) => v.id === vid), `${part.id} -> ${vid} exists`);
   }
+});
+
+test('brands and regional advice cover West Africa', () => {
+  assert.ok(BRANDS.length >= 80, 'brand list');
+  for (const b of BRANDS) assert.ok(b.id && b.name && b.origin && b.segment, b.id);
+  assert.ok(BRANDS.some((b) => b.name === 'Toyota'));
+  assert.ok(BRANDS.some((b) => b.name === 'Tata'));
+  assert.ok(REGION_TIPS.length >= 4);
+  for (const tip of REGION_TIPS) assert.ok(tip.partIds.every((id) => PARTS.some((p) => p.id === id)), tip.id);
 });
 
 test('normalize ignores accents and punctuation', () => {
@@ -26,7 +35,9 @@ test('search matches French text, OEM references and cross references', () => {
   assert.equal(searchParts('plaquettes')[0].part.id, 'p01');
   assert.equal(searchParts('04465-0K030')[0].part.id, 'p01');
   assert.equal(searchParts('KL148')[0].part.id, 'p06');
-  assert.ok(searchParts('plaquettes', { vehicleId: 'tucson-2019' }).every((r) => r.part.id === 'p03'));
+  const tucsonBrakes = searchParts('plaquettes', { vehicleId: 'tucson-2019' });
+  assert.ok(tucsonBrakes.some((r) => r.part.id === 'p03'));
+  assert.ok(tucsonBrakes.every((r) => r.part.compatible.includes('tucson-2019')));
   assert.ok(searchParts('', { category: 'Freinage' }).every((r) => r.part.category === 'Freinage'));
   assert.deepEqual(searchParts('zzzzinconnu'), []);
 });

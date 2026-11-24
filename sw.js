@@ -1,8 +1,8 @@
 /* MecanoLink service worker — offline-first for the demo shell. */
-const CACHE = 'mecanolink-v3';
+const CACHE = 'mecanolink-v4';
 const ASSETS = [
   './', './index.html', './styles.css', './motion.css', './app.js', './core.js',
-  './motion.js', './manifest.webmanifest', './assets/icon.svg',
+  './motion.js', './extra.js', './manifest.webmanifest', './assets/icon.svg',
 ];
 
 self.addEventListener('install', (event) => {

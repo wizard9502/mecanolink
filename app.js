@@ -3,10 +3,11 @@
  * Everything runs locally; checkout, SOS and AI assistant are simulations.
  */
 import {
-  PARTS, VEHICLES, CATEGORIES, CITIES, PAYMENTS, GARAGES, MAINTENANCE_RULES,
+  PARTS, VEHICLES, CATEGORIES, CITIES, PAYMENTS, GARAGES, MAINTENANCE_RULES, BRANDS, REGION_TIPS,
   findPart, findVehicle, searchParts, assistantRecommend, formatPrice,
   cartLines, cartCount, cartTotals, maintenanceFor, orderReference, translator, normalize,
 } from './core.js';
+import { extraHome, brandsSheetHtml } from './extra.js';
 
 const REPO_URL = 'https://github.com/wizard9502/mecanolink';
 const KEY = 'mecanolink.v1';
@@ -14,6 +15,7 @@ const KEY = 'mecanolink.v1';
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => [...root.querySelectorAll(sel)];
 
+const ICON_ALIAS = {"snowflake":"thermo","circle":"gear","wind":"filter","compass":"pin"};
 const ICONS = {
   brake: '<path d="M12 3v18M5 7l-2 4a8 8 0 0 0 18 0l-2-4M5 7h14"/><circle cx="12" cy="12" r="2"/>',
   filter: '<path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"/>',
@@ -38,12 +40,12 @@ const ICONS = {
   trash: '<path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14"/>',
 };
 function icon(name, cls = '') {
-  return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] ?? ICONS.info}</svg>`;
+  return `<svg class="${cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[ICON_ALIAS[name] || name] ?? ICONS.info}</svg>`;
 }
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* ---------------- state ---------------- */
-const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
+const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, brand: null, allVehicles: false, sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
 let state = { ...defaults };
 try {
   const saved = JSON.parse(localStorage.getItem(KEY) ?? '{}');
@@ -154,8 +156,8 @@ function renderVehicleBar() {
   </button>`;
 }
 function filteredParts() {
-  const filters = { vehicleId: state.vehicleId, category: state.category || undefined };
-  const results = searchParts(state.query, filters);
+  const filters = { vehicleId: state.allVehicles ? undefined : state.vehicleId, category: state.category || undefined };
+  const results = searchParts(state.query, filters).filter(({ part }) => !state.brand || part.brand === state.brand);
   if (state.sort === 'price') results.sort((a, b) => a.part.price - b.part.price);
   else if (state.sort === 'rating') results.sort((a, b) => b.part.rating - a.part.rating);
   else if (state.sort === 'stock') results.sort((a, b) => b.part.stock - a.part.stock);
@@ -180,10 +182,11 @@ function viewHome() {
       </div>
     </section>
     <div class="stat-strip">
-      <div class="stat"><strong>24</strong><span>pièces en stock</span></div>
-      <div class="stat"><strong>77</strong><span>marques couvertes</span></div>
-      <div class="stat"><strong>6</strong><span>villes desservies</span></div>
+      <div class="stat"><strong>${PARTS.length}</strong><span>pièces en stock</span></div>
+      <div class="stat"><strong>${BRANDS.length}</strong><span>marques couvertes</span></div>
+      <div class="stat"><strong>${CITIES.length}</strong><span>villes desservies</span></div>
     </div>
+${extraHome()}
     <section class="section"><div class="section-head"><h2>Entretien malin</h2><p>suivi automatique</p></div>${radarCard()}</section>
     <section class="section"><div class="section-head"><h2>Par catégorie</h2><p>${esc(t('viewAll'))}</p></div>
       <div class="chips">${CATEGORIES.map((c) => `<button class="chip" type="button" data-action="category" data-id="${c.id}">${icon(c.icon)}${esc(c.name)}</button>`).join('')}</div>
@@ -196,12 +199,13 @@ function viewCatalog() {
   const results = filteredParts();
   return `<section class="section" style="margin-top:14px">
       <div class="section-head"><div><h2>Catalogue</h2><p>${results.length} ${esc(t('results'))} · ${esc(activeVehicle().brand)} ${esc(activeVehicle().model)}</p></div>
-        <button class="btn sm ghost" type="button" data-action="open-vehicles">Changer</button></div>
+        <button class="btn sm ghost" type="button" data-action="open-vehicles">Changer</button><button class="btn sm ${state.allVehicles ? 'primary' : 'ghost'}" type="button" data-action="toggle-all">Tous véhicules</button></div>
       <div class="chips"><button class="chip ${!state.category ? 'active' : ''}" type="button" data-action="category" data-id="">Tout</button>
         ${CATEGORIES.map((c) => `<button class="chip ${state.category === c.id ? 'active' : ''}" type="button" data-action="category" data-id="${c.id}">${icon(c.icon)}${esc(c.name)}</button>`).join('')}</div>
       <div class="sort-row"><span>Trier :</span>
         ${[['pertinence','Pertinence'],['price','Prix croissant'],['rating','Mieux notées'],['stock','En stock']].map(([id,label]) => `<button class="sort-btn ${state.sort === id ? 'active' : ''}" type="button" data-action="sort" data-id="${id}">${label}</button>`).join('')}
       </div>
+      ${state.brand ? `<p style="margin:12px 0 0;font-size:11px;color:var(--muted)">Marque : <strong style="color:var(--text)">${esc(state.brand)}</strong> · <button class="link-btn" type="button" data-action="clear-brand">retirer</button></p>` : '' }
       ${state.query ? `<p style="margin:12px 0 0;font-size:11px;color:var(--muted)">Recherche : <strong style="color:var(--text)">« ${esc(state.query)} »</strong> · <button class="link-btn" type="button" data-action="clear-query">effacer</button></p>` : ''}
       <div style="margin-top:12px">${partGrid(results)}</div>
     </section>`;
@@ -442,6 +446,10 @@ document.addEventListener('click', (event) => {
     case 'open-vehicles': sheetVehicles(); break;
     case 'open-city': sheetCities(); break;
     case 'open-favorites': sheetFavorites(); break;
+    case 'open-brands': openSheet(brandsSheetHtml()); break;
+    case 'select-brand': state.brand = id; state.view = 'catalog'; save(); closeSheet(); render(); window.scrollTo({ top: 0, behavior: 'smooth' }); break;
+    case 'clear-brand': state.brand = null; render(); break;
+    case 'toggle-all': state.allVehicles = !state.allVehicles; render(); break;
     case 'open-part': sheetPart(id); break;
     case 'select-vehicle': state.vehicleId = id; save(); closeSheet(); render(); toast('Véhicule mis à jour'); break;
     case 'select-city': state.city = id; save(); closeSheet(); render(); toast(`Livraison : ${CITIES.find((c) => c.id === id)?.name}`); break;

@@ -14,8 +14,8 @@
 | Bandeau entretien | Radar d'entretien calculé depuis le kilométrage modifiable |
 | Panier / favoris en chiffres | Panier réel avec barre d’accès, quantités, Mobile Money simulé, facture et réachat |
 | SOS 24/7 indicatif | Panneau SOS avec demande simulée et garages à proximité |
-| Une seule langue | FR / EN, villes et frais de livraison, mode hors-ligne (PWA) |
-| Icônes vectorielles | Vraies photos de pièces (Wikimedia Commons), intégrées hors-ligne |
+| Une seule langue | FR / EN, villes et frais de livraison, conseils terrain Sénégal/Afrique de l’Ouest, mode hors-ligne |
+| 24 pièces / 8 catégories | 83 pièces, 13 catégories, 84 marques, filtres marque + tri |
 | Aucune animation | Mouvements progressifs : entrées en cascade, compteurs, survol, pressions, panneaux |
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwizard9502%2Fmecanolink&project-name=mecanolink&repository-name=mecanolink)
