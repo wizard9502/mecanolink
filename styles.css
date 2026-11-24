@@ -21,6 +21,7 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+[hidden] { display: none !important; }
 * { box-sizing: border-box; }
 html { color-scheme: dark; scroll-behavior: smooth; }
 body {
