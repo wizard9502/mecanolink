@@ -16,6 +16,8 @@
 | SOS 24/7 indicatif | Panneau SOS avec demande simulée et garages à proximité |
 | Une seule langue | FR / EN, villes et frais de livraison, mode hors-ligne (PWA) |
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwizard9502%2Fmecanolink&project-name=mecanolink&repository-name=mecanolink)
+
 ## Démarrer
 
 ```bash
