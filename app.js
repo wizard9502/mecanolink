@@ -45,7 +45,7 @@ function icon(name, cls = '') {
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* ---------------- state ---------------- */
-const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, brand: null, allVehicles: false, sellerQuery: '', sellerRegion: '', accent: 'orange', sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
+const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, brand: null, allVehicles: false, sellerQuery: '', sellerRegion: '', accent: 'orange', limit: 12, sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
 let state = { ...defaults };
 try {
   const saved = JSON.parse(localStorage.getItem(KEY) ?? '{}');
@@ -164,9 +164,11 @@ function filteredParts() {
   else if (state.sort === 'stock') results.sort((a, b) => b.part.stock - a.part.stock);
   return results;
 }
-function partGrid(parts) {
-  if (!parts.length) return `<div class="empty">${icon('info')}<p>Aucune pièce pour ces filtres. Essayez une autre catégorie ou un autre véhicule.</p></div>`;
-  return `<div class="grid">${parts.map(({ part }) => partCard(part)).join('')}</div>`;
+function partGrid(parts, paginate = false) {
+  if (!parts.length) return `<div class="empty">${icon('info')}<p>Aucune pièce pour ces filtres.</p><button class="btn sm" type="button" data-action="reset-filters">Réinitialiser les filtres</button></div>`;
+  const shown = paginate ? parts.slice(0, state.limit) : parts;
+  const more = paginate && parts.length > shown.length;
+  return `<div class="grid">${shown.map(({ part }) => partCard(part)).join('')}</div>` + (more ? `<button class="btn full" style="margin-top:12px" type="button" data-action="show-more">Afficher ${parts.length - shown.length} de plus</button>` : '');
 }
 
 /* ---------------- views ---------------- */
@@ -208,7 +210,7 @@ function viewCatalog() {
       </div>
       ${state.brand ? `<p style="margin:12px 0 0;font-size:11px;color:var(--muted)">Marque : <strong style="color:var(--text)">${esc(state.brand)}</strong> · <button class="link-btn" type="button" data-action="clear-brand">retirer</button></p>` : '' }
       ${state.query ? `<p style="margin:12px 0 0;font-size:11px;color:var(--muted)">Recherche : <strong style="color:var(--text)">« ${esc(state.query)} »</strong> · <button class="link-btn" type="button" data-action="clear-query">effacer</button></p>` : ''}
-      <div style="margin-top:12px">${partGrid(results)}</div>
+      <div style="margin-top:12px">${partGrid(results, true)}</div>
     </section>`;
 }
 function viewGarage() {
@@ -328,13 +330,15 @@ function sheetAssistant() {
     <form id="assistantForm"><label class="field"><span>Décrivez votre besoin</span><input name="q" placeholder="Ex. plaquettes Hilux 2020, ou 1HGCM82633A004352" autocomplete="off"></label>
     <div class="seg" style="margin-bottom:12px">${['plaquettes hilux 2020', 'filtre à huile', 'batterie', 'injecteur 308'].map((s) => `<button type="button" data-action="assistant-example" data-q="${esc(s)}">${esc(s)}</button>`).join('')}</div>
     <button class="btn primary full" type="submit">${icon('spark')} Analyser ma demande</button></form>
-    <div id="assistantOut" style="margin-top:14px"></div>
+    <p id="assistantError" class="field-error" hidden>Veuillez décrire une pièce ou saisir un VIN.</p><div id="assistantOut" style="margin-top:14px"></div>
     <p style="font-size:10px;color:var(--muted);margin-top:12px">L’assistant lit le texte et le VIN saisi localement, puis propose les pièces compatibles avec le profil actif. C’est une démonstration, pas un diagnostic mécanique.</p>`);
 }
 function runAssistant(query) {
   const out = $('#assistantOut');
   if (!out) return;
-  if (!query.trim()) { out.innerHTML = '<div class="empty">Saisissez une demande ou touchez un exemple.</div>'; return; }
+  if (!query.trim()) { const err = $('#assistantError'); if (err) { err.hidden = false; const input = $('#assistantForm [name=q]'); input?.setAttribute('aria-invalid','true'); input?.focus(); } return; }
+  const errBox = $('#assistantError'); if (errBox) errBox.hidden = true;
+  $('#assistantForm [name=q]')?.removeAttribute('aria-invalid');
   const result = assistantRecommend(query, state.vehicleId);
   out.innerHTML = `<div class="assistant-result">
     <p>${icon('spark')} ${esc(result.explanation)}</p>
@@ -356,7 +360,7 @@ function sheetCart() {
     <div class="kv" style="margin-top:12px"><span>${esc(t('subtotal'))}</span><strong>${price(totals.subtotal)}</strong></div>
     ${totals.savings ? `<div class="kv"><span>Économies</span><strong style="color:var(--green)">− ${price(totals.savings)}</strong></div>` : ''}
     <div class="kv"><span>${esc(t('delivery'))} · ${esc(CITIES.find((c) => c.id === state.city)?.name ?? '')}</span><strong>${price(totals.delivery)}</strong></div>
-    <div class="row" style="margin:8px 0"><span style="font-size:11px;color:var(--muted)">Livraison express 2 h (+ 7 500 F)</span><button class="btn sm ${state.express ? 'primary' : ''}" type="button" data-action="toggle-express">${state.express ? 'Activée' : 'Activer'}</button></div>
+    <div class="row" style="margin:8px 0"><span style="font-size:11px;color:var(--muted)">Livraison express 2 h (+ 7 500 F)</span><button class="btn sm ${state.express ? 'primary' : ''}" type="button" data-action="toggle-express" role="switch" aria-checked="${state.express}">${state.express ? 'Activée' : 'Activer'}</button></div>
     <div class="total-box"><small>Total à payer · arrivée estimée ${esc(totals.eta)}</small><div class="big">${price(totals.total)}</div></div>
     <span style="font-size:11px;color:var(--muted);font-weight:700">Mode de paiement (simulation)</span>
     <div style="margin-top:7px">${PAYMENTS.map((p) => `<button class="pay-option ${state.payment === p.id ? 'active' : ''}" type="button" data-action="select-payment" data-id="${p.id}"><span class="pay-logo" style="background:${p.color}">${esc(p.short)}</span>${esc(p.name)}</button>`).join('')}</div>
@@ -391,6 +395,7 @@ function addToCart(id) {
   const line = state.cart.find((l) => l.id === id);
   if (line) line.qty += 1; else state.cart.push({ id, qty: 1 });
   save(); render();
+  navigator.vibrate?.(12);
   toast(`${p.name} · ${t('added')}`);
   if (!$('#sheetRoot').hidden && $('#sheetRoot').innerHTML.includes('Mode de paiement')) sheetCart();
 }
@@ -423,6 +428,7 @@ function pay() {
   state.orders.push(order);
   state.cart = [];
   save(); render();
+  navigator.vibrate?.([15, 40, 25]);
   sheetSuccess(order);
   toast(`Commande ${order.ref} confirmée`);
 }
@@ -456,6 +462,8 @@ document.addEventListener('click', (event) => {
     case 'toggle-all': state.allVehicles = !state.allVehicles; render(); break;
     case 'accent': state.accent = state.accent === 'lime' ? 'orange' : 'lime'; document.documentElement.dataset.accent = state.accent; save(); render(); break;
     case 'seller-region': state.sellerRegion = id || ''; render(); break;
+    case 'show-more': state.limit += 12; render(); break;
+    case 'reset-filters': state.query = ''; state.category = null; state.brand = null; state.limit = 12; const si = $('#searchInput'); if (si) si.value = ''; render(); break;
     case 'open-part': sheetPart(id); break;
     case 'select-vehicle': state.vehicleId = id; save(); closeSheet(); render(); toast('Véhicule mis à jour'); break;
     case 'select-city': state.city = id; save(); closeSheet(); render(); toast(`Livraison : ${CITIES.find((c) => c.id === id)?.name}`); break;

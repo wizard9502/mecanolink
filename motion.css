@@ -175,3 +175,7 @@ html.motion-ready .art.loaded::before { display: none; }
   .ml-check circle, .ml-check path { animation: none; stroke-dashoffset: 0; }
   html.motion-ready .art::before { display: none; }
 }
+
+/* Inline validation, per Mobutu's form rules. */
+.field-error { margin: -4px 0 10px; font-size: 11px; font-weight: 700; color: #ffb3b3; }
+.field input[aria-invalid='true'] { border-color: var(--red); box-shadow: 0 0 0 3px rgba(255,107,107,.12); }
