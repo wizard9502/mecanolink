@@ -1,0 +1,76 @@
+/* MecanoLink — motion layer. Progressive enhancement: only active when JS adds .motion-ready. */
+:root { --motion-ease: cubic-bezier(.2, .8, .2, 1); }
+
+html.motion-ready .m-anim { opacity: 0; transform: translateY(14px) scale(.985); }
+html.motion-ready .m-anim.m-in {
+  animation: ml-rise .58s var(--motion-ease) both;
+  animation-delay: calc(var(--m-i, 0) * 55ms);
+}
+@keyframes ml-rise { from { opacity: 0; transform: translateY(14px) scale(.985); } to { opacity: 1; transform: none; } }
+
+/* Hero: one quiet light sweep, once in a while */
+html.motion-ready .hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(112deg, transparent 32%, rgba(255, 192, 74, .13) 48%, transparent 64%);
+  transform: translateX(-120%);
+  animation: ml-sweep 7s var(--motion-ease) infinite;
+}
+@keyframes ml-sweep { 0%, 62% { transform: translateX(-120%); } 88%, 100% { transform: translateX(120%); } }
+
+html.motion-ready .hero h1 em {
+  background: linear-gradient(100deg, var(--accent), var(--accent-2), var(--accent));
+  background-size: 220% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: ml-shimmer 6s linear infinite;
+}
+@keyframes ml-shimmer { to { background-position: 220% center; } }
+
+/* Cards answer the pointer */
+html.motion-ready .part-card .art svg { transition: transform .35s var(--motion-ease); }
+html.motion-ready .part-card:hover .art svg { transform: rotate(-8deg) scale(1.1); }
+html.motion-ready .part-card:hover .part-badge { animation: ml-pop .35s var(--motion-ease); }
+html.motion-ready .add-btn.bump { animation: ml-bump .42s var(--motion-ease); }
+@keyframes ml-bump { 40% { transform: scale(1.22) rotate(-8deg); } 75% { transform: scale(.94); } }
+@keyframes ml-pop { 50% { transform: scale(1.08); } }
+
+/* Radar, chips, navigation */
+html.motion-ready .radar-item .ring { animation: ml-ring .7s var(--motion-ease) both; animation-delay: calc(var(--m-i, 0) * 90ms); }
+@keyframes ml-ring { from { transform: scale(.7); opacity: 0; } to { transform: none; opacity: 1; } }
+html.motion-ready .chip.active { animation: ml-chip 2.6s ease-in-out infinite; }
+@keyframes ml-chip { 50% { box-shadow: 0 0 0 4px rgba(255, 138, 31, .09); } }
+html.motion-ready .bottom-nav button.active svg { animation: ml-pop .4s var(--motion-ease); }
+html.motion-ready .stat strong { font-variant-numeric: tabular-nums; }
+
+/* Press feedback */
+html.motion-ready .btn,
+html.motion-ready .chip,
+html.motion-ready .add-btn,
+html.motion-ready .pay-option,
+html.motion-ready .seg button,
+html.motion-ready .bottom-nav button { position: relative; overflow: hidden; }
+.ml-ripple {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  margin: -9px 0 0 -9px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .28);
+  pointer-events: none;
+  animation: ml-ripple .5s ease-out forwards;
+}
+@keyframes ml-ripple { to { transform: scale(9); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  html.motion-ready .m-anim,
+  html.motion-ready .m-anim.m-in { opacity: 1 !important; transform: none !important; animation: none !important; }
+  html.motion-ready .hero::before,
+  html.motion-ready .hero h1 em,
+  html.motion-ready .chip.active,
+  html.motion-ready .radar-item .ring { animation: none !important; }
+  .ml-ripple { display: none; }
+}

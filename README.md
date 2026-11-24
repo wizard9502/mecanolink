@@ -15,6 +15,7 @@
 | Panier / favoris en chiffres | Panier réel, quantités, Mobile Money simulé, facture et réachat |
 | SOS 24/7 indicatif | Panneau SOS avec demande simulée et garages à proximité |
 | Une seule langue | FR / EN, villes et frais de livraison, mode hors-ligne (PWA) |
+| Aucune animation | Mouvements progressifs : entrées en cascade, compteurs, survol, pressions, panneaux |
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwizard9502%2Fmecanolink&project-name=mecanolink&repository-name=mecanolink)
 
@@ -46,6 +47,7 @@ core.js            données + logique pure (testable, sans DOM)
 app.js             interface, événements, panneaux
 index.html         coquille de l'application
 styles.css         système visuel mobile-first
+motion.css/js      couche de mouvements (respecte prefers-reduced-motion)
 sw.js              cache hors-ligne
 tests/             tests node:test
 docs/DESIGN.md     décisions de conception
