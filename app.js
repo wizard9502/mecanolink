@@ -43,7 +43,7 @@ function icon(name, cls = '') {
 const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /* ---------------- state ---------------- */
-const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, payment: 'orange', express: false, installDismissed: false };
+const defaults = { view: 'home', lang: 'fr', city: 'dakar', vehicleId: VEHICLES[0].id, cart: [], favorites: [], orders: [], query: '', category: null, sort: 'pertinence', payment: 'orange', express: false, installDismissed: false };
 let state = { ...defaults };
 try {
   const saved = JSON.parse(localStorage.getItem(KEY) ?? '{}');
@@ -115,14 +115,15 @@ function partCard(part) {
   return `<article class="part-card">
     <button class="fav-toggle ${fav ? 'on' : ''}" type="button" data-action="fav" data-id="${part.id}" aria-label="Favori ${esc(part.name)}">${icon('heart')}</button>
     <span class="part-badge">${esc(part.badge)}</span>
-    <button class="art" type="button" data-action="open-part" data-id="${part.id}" aria-label="Voir ${esc(part.name)}">${icon(catOf(part.category).icon)}</button>
+    <button class="art" type="button" data-action="open-part" data-id="${part.id}" aria-label="Voir ${esc(part.name)}">
+      <img src="${esc(part.photo)}" alt="${esc(part.name)}" loading="lazy" decoding="async" onerror="this.hidden=true;this.nextElementSibling.hidden=false">
+      <span class="art-fallback" hidden>${icon(catOf(part.category).icon)}</span>
+    </button>
     <h3 class="part-name">${esc(part.name)}</h3>
     <div class="part-ref">RÉF ${esc(part.oem)}</div>
     <div class="part-meta"><span class="stars">★ ${part.rating.toFixed(1)}</span><span>·</span><span>${part.stock} ${esc(t('inStock'))}</span></div>
-    <div class="part-bottom">
-      <div class="price">${price(part.price)}${part.oldPrice ? `<small>${price(part.oldPrice)}</small>` : ''}</div>
-      <button class="add-btn" type="button" data-action="${inCart ? 'open-cart' : 'add'}" data-id="${part.id}" aria-label="Ajouter ${esc(part.name)}">${icon(inCart ? 'check' : 'plus')}</button>
-    </div>
+    <div class="part-bottom"><div class="price">${price(part.price)}${part.oldPrice ? `<small>${price(part.oldPrice)}</small>` : ''}</div></div>
+    <button class="add-bar" type="button" data-action="${inCart ? 'open-cart' : 'add'}" data-id="${part.id}">${icon(inCart ? 'check' : 'plus')} ${inCart ? 'Dans le panier' : esc(t('add'))}</button>
   </article>`;
 }
 function radarCard() {
@@ -154,7 +155,11 @@ function renderVehicleBar() {
 }
 function filteredParts() {
   const filters = { vehicleId: state.vehicleId, category: state.category || undefined };
-  return searchParts(state.query, filters);
+  const results = searchParts(state.query, filters);
+  if (state.sort === 'price') results.sort((a, b) => a.part.price - b.part.price);
+  else if (state.sort === 'rating') results.sort((a, b) => b.part.rating - a.part.rating);
+  else if (state.sort === 'stock') results.sort((a, b) => b.part.stock - a.part.stock);
+  return results;
 }
 function partGrid(parts) {
   if (!parts.length) return `<div class="empty">${icon('info')}<p>Aucune pièce pour ces filtres. Essayez une autre catégorie ou un autre véhicule.</p></div>`;
@@ -194,6 +199,9 @@ function viewCatalog() {
         <button class="btn sm ghost" type="button" data-action="open-vehicles">Changer</button></div>
       <div class="chips"><button class="chip ${!state.category ? 'active' : ''}" type="button" data-action="category" data-id="">Tout</button>
         ${CATEGORIES.map((c) => `<button class="chip ${state.category === c.id ? 'active' : ''}" type="button" data-action="category" data-id="${c.id}">${icon(c.icon)}${esc(c.name)}</button>`).join('')}</div>
+      <div class="sort-row"><span>Trier :</span>
+        ${[['pertinence','Pertinence'],['price','Prix croissant'],['rating','Mieux notées'],['stock','En stock']].map(([id,label]) => `<button class="sort-btn ${state.sort === id ? 'active' : ''}" type="button" data-action="sort" data-id="${id}">${label}</button>`).join('')}
+      </div>
       ${state.query ? `<p style="margin:12px 0 0;font-size:11px;color:var(--muted)">Recherche : <strong style="color:var(--text)">« ${esc(state.query)} »</strong> · <button class="link-btn" type="button" data-action="clear-query">effacer</button></p>` : ''}
       <div style="margin-top:12px">${partGrid(results)}</div>
     </section>`;
@@ -263,6 +271,13 @@ function render() {
   fb.textContent = fc; fb.hidden = !fc;
   if (!$('#installBanner').hidden) $('#installBanner').hidden = true;
   if (deferredPrompt && !state.installDismissed && state.view === 'home') $('#installBanner').hidden = false;
+  const bar = $('#cartBar');
+  if (!bar) return;
+  bar.hidden = cc === 0;
+  if (cc) {
+    const totals = cartTotals(state.cart, state.city, state.express);
+    $('#cartBarText').textContent = `${cc} article${cc > 1 ? 's' : ''} · ${price(totals.total)}`;
+  }
 }
 
 /* ---------------- sheets ---------------- */
@@ -288,7 +303,8 @@ function sheetPart(id) {
   const p = findPart(id);
   if (!p) return;
   openSheet(`${sheetHead(p.name, `${p.brand} · ${catOf(p.category).name}`)}
-    <div class="assistant-result" style="text-align:center">${icon(catOf(p.category).icon)}<p style="margin-top:8px">${esc(p.desc)}</p></div>
+    <div class="part-hero"><img src="${esc(p.photo)}" alt="${esc(p.name)}"><span class="part-badge">${esc(p.badge)}</span></div>
+    <p style="font-size:12px;color:#d3d6d9;margin:12px 0">${esc(p.desc)}</p>
     <div class="kv"><span>Référence OEM</span><strong>${esc(p.oem)}</strong></div>
     <div class="kv"><span>Références croisées</span><strong>${esc(p.cross.join(' · '))}</strong></div>
     <div class="kv"><span>Compatibilité</span><strong>${p.compatible.map((vid) => { const v = findVehicle(vid); return v ? `${v.brand} ${v.model} ${v.year}` : vid; }).join(', ')}</strong></div>
@@ -314,7 +330,7 @@ function runAssistant(query) {
   const result = assistantRecommend(query, state.vehicleId);
   out.innerHTML = `<div class="assistant-result">
     <p>${icon('spark')} ${esc(result.explanation)}</p>
-    ${result.items.map(({ part }) => `<div class="part-mini"><span>${esc(part.name)}<br><small style="color:var(--muted)">${esc(part.oem)}</small></span>
+    ${result.items.map(({ part }) => `<div class="part-mini"><img class="mini-thumb" src="${esc(part.photo)}" alt="" loading="lazy"><span>${esc(part.name)}<br><small style="color:var(--muted)">${esc(part.oem)}</small></span>
       <button class="btn sm primary" type="button" data-action="add" data-id="${part.id}">${price(part.price)} · +</button></div>`).join('')}
     ${result.items.length ? '' : '<div class="empty">Aucun résultat.</div>'}
   </div>`;
@@ -322,7 +338,7 @@ function runAssistant(query) {
 function sheetCart() {
   const totals = cartTotals(state.cart, state.city, state.express);
   const lines = state.cart.length ? cartLines(state.cart).map(({ part, qty }) => `<div class="cart-line">
-    <span class="thumb">${icon(catOf(part.category).icon)}</span>
+    <img class="thumb" src="${esc(part.photo)}" alt="" loading="lazy">
     <div><div style="font-size:12px;font-weight:700">${esc(part.name)}</div><div style="font-size:10px;color:var(--muted)">${price(part.price)}</div>
       <div class="qty"><button type="button" data-action="dec" data-id="${part.id}" aria-label="Retirer une unité">−</button><span>${qty}</span><button type="button" data-action="inc" data-id="${part.id}" aria-label="Ajouter une unité">+</button></div></div>
     <div style="text-align:right"><strong style="font-size:12px">${price(part.price * qty)}</strong><br><button class="link-btn" type="button" data-action="remove-line" data-id="${part.id}">${esc(t('close'))}</button></div>
@@ -432,6 +448,7 @@ document.addEventListener('click', (event) => {
     case 'select-payment': state.payment = id; save(); sheetCart(); break;
     case 'toggle-express': state.express = !state.express; save(); sheetCart(); break;
     case 'category': state.category = id || null; state.view = 'catalog'; render(); window.scrollTo({ top: 0, behavior: 'smooth' }); break;
+    case 'sort': state.sort = id; render(); break;
     case 'clear-query': state.query = ''; $('#searchInput').value = ''; render(); break;
     case 'lang': state.lang = state.lang === 'fr' ? 'en' : 'fr'; save(); render(); break;
     case 'pay': pay(); break;

@@ -81,7 +81,7 @@ if (!reduce && 'IntersectionObserver' in window && 'MutationObserver' in window)
   new MutationObserver(repaint).observe(document.body, { childList: true, subtree: true });
 
   document.addEventListener('pointerdown', (event) => {
-    const btn = event.target.closest('.btn, .chip, .add-btn, .pay-option, .seg button, .bottom-nav button');
+    const btn = event.target.closest('.btn, .chip, .add-btn, .add-bar, .pay-option, .seg button, .bottom-nav button');
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
     const ripple = document.createElement('span');
@@ -93,7 +93,7 @@ if (!reduce && 'IntersectionObserver' in window && 'MutationObserver' in window)
   });
 
   document.addEventListener('click', (event) => {
-    const btn = event.target.closest('.add-btn');
+    const btn = event.target.closest('.add-btn, .add-bar');
     if (!btn) return;
     btn.classList.remove('bump');
     void btn.offsetWidth;

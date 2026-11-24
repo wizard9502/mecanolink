@@ -1,5 +1,5 @@
 /* MecanoLink service worker — offline-first for the demo shell. */
-const CACHE = 'mecanolink-v2';
+const CACHE = 'mecanolink-v3';
 const ASSETS = [
   './', './index.html', './styles.css', './motion.css', './app.js', './core.js',
   './motion.js', './manifest.webmanifest', './assets/icon.svg',

@@ -9,12 +9,13 @@
 | Maquette Gemini | MecanoLink v1 |
 |---|---|
 | Écran statique sombre/orange | App interactive complète (5 écrans + 8 panneaux) |
-| Recherche décorative | Recherche accent-insensible sur nom, marque, OEM, références croisées |
+| Recherche décorative | Recherche accent-insensible + tri (prix, note, stock) |
 | Bouton « VIN / IA » factice | Assistant local qui parse texte + VIN et explique ses recommandations |
 | Bandeau entretien | Radar d'entretien calculé depuis le kilométrage modifiable |
-| Panier / favoris en chiffres | Panier réel, quantités, Mobile Money simulé, facture et réachat |
+| Panier / favoris en chiffres | Panier réel avec barre d’accès, quantités, Mobile Money simulé, facture et réachat |
 | SOS 24/7 indicatif | Panneau SOS avec demande simulée et garages à proximité |
 | Une seule langue | FR / EN, villes et frais de livraison, mode hors-ligne (PWA) |
+| Icônes vectorielles | Vraies photos de pièces (Wikimedia Commons), intégrées hors-ligne |
 | Aucune animation | Mouvements progressifs : entrées en cascade, compteurs, survol, pressions, panneaux |
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fwizard9502%2Fmecanolink&project-name=mecanolink&repository-name=mecanolink)
